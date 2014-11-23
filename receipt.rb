@@ -24,20 +24,10 @@ class Recipt
   def image_write(path)
     bmp = Bmp.new(path)
 
-    # serialport.write("12345678901234567890123456789012\n")
-
-    img = []
-    bmp.image.each_with_index do |line, cnt|
-      if line.to_i(2) != 0
-        img << [line].pack("b*")
-        # buffer += [line].pack("b*")
-      end
-    end
-
-    buffer  = "#{0x12.chr}v" # DC2 v : Print LSB Bitmap
-    buffer += 35.chr  # nL
-    buffer += 0.chr   # nH
-    buffer += img.join
+    buffer  = "              # {0x12.chr}v" # DC2 v : Print LSB Bitmap
+    buffer += bmp.height.chr # nL
+    buffer += 0.chr          # nH
+    buffer += bmp.image.map{|line| [line].pack("b*")}.join
     serialport.write(buffer)
   end
 
@@ -47,11 +37,9 @@ class Recipt
 end
 
 r = Recipt.new('/dev/tty.usbserial-FTGD4019')
-# r.text_write("abc\n")
-
 
 r.text_write("--------------------------------\n")
-r.image_write("./name2.bmp")
+r.image_write("./name.bmp")
 r.text_write("--------------------------------\n")
 r.text_write("\n")
 r.text_write("Web engineer(Ruby on Rails)\n")
