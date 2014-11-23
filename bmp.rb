@@ -27,8 +27,6 @@ class Bmp
     @bitmap_core_header[:bcHeight]
   end
 
-
-
   private
 
   def load_BITMAPFILEHEADER

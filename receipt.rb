@@ -21,47 +21,24 @@ class Recipt
     @serialport.write(str)
   end
 
-  HEIGHT = 50
   def image_write(path)
     bmp = Bmp.new(path)
 
-    serialport.write("#{0x12.chr}v") # DC2 v : Print LSB Bitmap
+    # serialport.write("12345678901234567890123456789012\n")
 
-    serialport.write(100.chr)  # nL
-    serialport.write(0x00.chr) # nH
+    img = []
     bmp.image.each_with_index do |line, cnt|
-      serialport.write([line].pack("b*"))
+      if line.to_i(2) != 0
+        img << [line].pack("b*")
+        # buffer += [line].pack("b*")
+      end
     end
 
-    # Array.new(bmp.height / HEIGHT, HEIGHT).tap do |a|
-      # a << bmp.height%HEIGHT if bmp.height%HEIGHT != 0
-    # end.each_with_index do |height, cnt|
-      # serialport.write("#{0x12.chr}v") # DC2 v : Print LSB Bitmap
-      # serialport.write(height.chr)     # nL
-      # # TODO : bmp.width  が 384px(MAX) 以外の場合を考慮していない
-      # serialport.write(0.chr)       # nH
-
-      # bmp.image[cnt*HEIGHT, height].each do |line|
-        # serialport.write([line].pack("b*"))
-      # end
-    # end
-
-   # Array.new(bmp.height / 50, 50).tap do |a|
-     # a << bmp.height%50 if bmp.height%50 != 0
-   # end.each_with_index do |height, cnt|
-      # serialport.write("#{0x12.chr}v") # DC2 v : Print LSB Bitmap
-      # serialport.write(height.chr)     # nL
-      # # TODO : bmp.width  が 384px(MAX) 以外の場合を考慮していない
-      # serialport.write(0x00.chr)       # nH
-
-      # bmp.image[cnt*50, height].each do |line|
-        # p line
-        # [line].pack("b*").split(//).each do |chr|
-          # serialport.write(chr)
-        # end
-      # end
-   # end
-   serialport.write("\n\n")
+    buffer  = "#{0x12.chr}v" # DC2 v : Print LSB Bitmap
+    buffer += 35.chr  # nL
+    buffer += 0.chr   # nH
+    buffer += img.join
+    serialport.write(buffer)
   end
 
   def close
@@ -71,5 +48,20 @@ end
 
 r = Recipt.new('/dev/tty.usbserial-FTGD4019')
 # r.text_write("abc\n")
+
+
+r.text_write("--------------------------------\n")
 r.image_write("./name2.bmp")
+r.text_write("--------------------------------\n")
+r.text_write("\n")
+r.text_write("Web engineer(Ruby on Rails)\n")
+r.text_write("Maker\n")
+r.text_write("Ninja Heads!\n")
+r.text_write("\n")
+r.text_write("twitter  : @kasei_san\n")
+r.text_write("facebook : facebook.com/kaseisan\n")
+r.text_write("Qiita    : qiita.com/kasei-san\n")
+
+r.text_write("\n\n\n\n")
+
 r.close
