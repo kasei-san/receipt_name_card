@@ -1,6 +1,6 @@
 require_relative 'receipt.rb'
 Recipt.new('/dev/tty.usbserial-FTGD4019') do
-  control_paramer(5, 160, 4)
+  control_paramer(5, 80, 2)
   text_write("--------------------------------\n")
   image_write("./name.bmp")
   text_write("--------------------------------\n")
