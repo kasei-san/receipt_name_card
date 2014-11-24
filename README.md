@@ -19,3 +19,6 @@ receipt_name_card
 $ ruby main.rb
 ```
 
+## 出力例
+
+![出力例](https://raw.githubusercontent.com/kasei-san/receipt_name_card/master/sample.png)
