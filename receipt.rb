@@ -6,11 +6,13 @@ require "./bmp.rb"
 class Recipt
   attr_reader :serialport
 
-  def initialize(path)
+  def initialize(path, &proc)
     @serialport = SerialPort.new(path, 19200)
     @serialport.read_timeout = 1000
     @serialport.write "\e@" # ESC @ : Reset
     control_paramer
+    instance_eval(&proc)
+    @serialport.close
   end
 
   def control_paramer(max_printing_dots=10, heating_time=80, heating_interval=2)
@@ -36,20 +38,21 @@ class Recipt
   end
 end
 
-r = Recipt.new('/dev/tty.usbserial-FTGD4019')
-r.text_write("--------------------------------\n")
-r.image_write("./name.bmp")
-r.text_write("--------------------------------\n")
-r.image_write("./qr.bmp")
-r.text_write("  How to make Cyber Sunglasses  \n")
-r.text_write("--------------------------------\n")
-r.text_write("\n")
-r.text_write("Web engineer(Ruby on Rails)\n")
-r.text_write("Maker\n")
-r.text_write("Ninja Heads!\n")
-r.text_write("\n")
-r.text_write("twitter  : @kasei_san\n")
-r.text_write("facebook : facebook.com/kaseisan\n")
-r.text_write("Qiita    : qiita.com/kasei-san\n")
-r.text_write("\n\n\n\n")
-r.close
+Recipt.new('/dev/tty.usbserial-FTGD4019') do
+  control_paramer(5, 160, 4)
+  text_write("--------------------------------\n")
+  image_write("./name.bmp")
+  text_write("--------------------------------\n")
+  image_write("./qr.bmp")
+  text_write("  How to make Cyber Sunglasses  \n")
+  text_write("--------------------------------\n")
+  text_write("\n")
+  text_write("Web engineer(Ruby on Rails)\n")
+  text_write("Maker\n")
+  text_write("Ninja Heads!\n")
+  text_write("\n")
+  text_write("twitter  : @kasei_san\n")
+  text_write("facebook : facebook.com/kaseisan\n")
+  text_write("Qiita    : qiita.com/kasei-san\n")
+  text_write("\n\n\n\n")
+end
